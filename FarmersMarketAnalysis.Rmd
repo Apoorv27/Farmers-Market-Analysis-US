@@ -1,0 +1,141 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Name:Apoorv Dudhe
+Section 02
+IE6600 Computation and Visualization 
+
+```{r}
+library(purrr)
+library(stringr)
+library(dplyr)
+library(ggplot2)
+library(tibble)
+library(reshape2)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(tidyverse)
+library(lubridate)
+library(selectr)
+library(gridExtra)
+
+FarmerMarket <- read.csv("C:/Users/apoor/Desktop/Computation and Visualization/Project 1/fmarket.csv", stringsAsFactors = F)
+Regions <- data.frame(State = state.name , Region = state.region)
+FarmerMarket <- inner_join(FarmerMarket, Regions, by = c("State" = "State"))
+```
+#1.a
+```{r}
+FarmerMarket %>%   
+  group_by(Region) %>% 
+  summarise(Number_of_markets= n()) %>% 
+  ggplot(aes(x = reorder(Region, Number_of_markets, FUN=sum), y = Number_of_markets, fill = Region))+
+  geom_bar(stat = "identity")+ labs(title="Market Distribution by Region",x="Region",y="Number of Market")+geom_text(aes(label=Number_of_markets), vjust=0.3, color="Black", size=3)+scale_fill_brewer(palette="Oranges")+coord_flip()
+```
+#1.b
+```{r}
+Market<-FarmerMarket %>%   
+  group_by(State) %>% 
+  summarise(Number_of_markets= n())
+  
+Market
+ggplot(Market,mapping=aes(x=reorder(Market$State,Market$Number_of_markets),y=Market$Number_of_markets))+
+  geom_bar(stat='identity')+labs(title="Number of markets in each Statet",x="State",y="Number Of markets")+coord_flip()
+```
+#1.c
+```{r}
+start_month <- as.numeric(str_split(stringr::str_split(as.character(FarmerMarket$Season1Date[3]), " ")[[1]][1],"/")[[1]][1])
+
+
+FarmerMarket$Start_month <- sapply (lapply(FarmerMarket$Season1Date, function(x){
+  return (as.numeric(str_split(stringr::str_split(as.character(x), " ")[[1]][1],"/")[[1]][1]))
+}),"[",1)
+Prod_start_month <-FarmerMarket$Start_month[FarmerMarket$Start_month != "" & !is.na(FarmerMarket$Start_month)]
+#Production_First_Month <- FarmerMarket$starting_month[FarmerMarket$starting_month != "" & !is.na(FarmerMarket$starting_month)]
+table(Prod_start_month)
+hist(Prod_start_month, breaks = 15, col="#009999", xlim = c(0,13),
+     xlab = 'Months', main= "Farmers Market yearly distribution")
+```
+#3.b
+```{r}
+spsp<-FarmerMarket %>% gather('Variety_of_Products','Status',29:59)%>%
+  filter(Status == 'Y') %>%
+  group_by(Variety_of_Products) %>% 
+  summarise(Count = n()) 
+spsp
+
+ggplot(spsp,mapping=aes(x=reorder(spsp$Variety_of_Products,spsp$Count),y=spsp$Count))+
+  geom_bar(stat='identity')+labs(title="Food Diversity in Farmers Market",x="Product Variety",y="Number Of Product")+coord_flip()
+```
+#3.b
+```{r}
+qwe <- FarmerMarket %>% gather('NP','Status',33:39)%>%
+  filter(Status == 'Y') %>%
+  group_by(NP,Region) %>% 
+  summarise(Count = n()) 
+
+  w1<- ggplot(data=qwe, aes(x=Region, y=Count, fill=NP)) +
+  geom_bar(stat="identity",width = 0.5)+labs(title="Diversity of Crops in all Regions (Selected Crops)",x="Regions",y="Number of markets", fill="Crops")
+w2<-w1+coord_flip()
+w2
+```
+#3.b
+```{r}
+Prods <- FarmerMarket[,c(11,60,29:58)]
+Prods
+
+
+tiles <- Prods %>% select(Region,Wine,Grains,Juices,Mushrooms,Tofu,Fruits,Soap,Trees)%>% group_by(Region) 
+tiles_1<-melt(tiles,na.rm=T)
+er<-tiles_1%>%gather('Product','Stats',2:8)
+xy<-er%>%
+filter(Stats == 'Y') %>%
+  group_by(Product,Region) %>% 
+  summarise(Number_of_Market = n())
+xy
+#xy_1 <- xy %>% rename(Regions=Region,Product=variable,Count=value)
+xz<-xy%>%group_by(Product,Region)%>%summarise(Number_of_Market=sum(Number_of_Market))
+ggplot(xz, aes(x =Product, y = Region, fill=Number_of_Market)) +labs(title="Diversity of Crops in all Region (Selected Products)")+ geom_tile()
+```
+#4.a
+```{r}
+FarmerMarket %>% gather('Payment_Mode','Status',24:28) %>% 
+  filter(Status == 'Y') %>%
+  group_by(Payment_Mode) %>% 
+  summarise(Count = n()) %>% 
+  ggplot(aes(x=Payment_Mode,y=Count,fill=Payment_Mode))+geom_bar(stat='identity',width = 0.5)+geom_text(aes(label=Count),size=3,vjust=1)+labs(title="Payment Modes used across all markets",x="Payment Modes",y="Number of markets", fill="Payment Mode")
+```
+#4.a
+```{r}
+dc34 <- FarmerMarket %>% gather('Payment_Mode','Status',24:28)%>%
+  filter(Status == 'Y') %>%
+  group_by(Payment_Mode,Region) %>% 
+  summarise(Count = n()) 
+
+  d1<- ggplot(data=dc34, aes(x=Region, y=Count, fill=Payment_Mode)) +
+  geom_bar(stat="identity",width = 0.5)+labs(title="Payment Modes used in Region",x="Region",y="Number of markets", fill="Payment Mode")
+d2<-d1+coord_flip()
+d2
+```
+#4.a
+```{r}
+Top10 <- subset(FarmerMarket, FarmerMarket$State == "California"|FarmerMarket$State == "Florida"|FarmerMarket$State == "ILLinois"|FarmerMarket$State == "Massachusetts"|FarmerMarket$State == "Michigan"|FarmerMarket$State == "New York"|FarmerMarket$State == "Ohio"|FarmerMarket$State == "Pennsylvania"|FarmerMarket$State == "Virginia"|FarmerMarket$State == "Wisconsin") 
+a123<- Top10 %>% gather('PM','Status',24:28)%>%
+  filter(Status == 'Y') %>%
+  group_by(PM,State) %>% 
+  summarise(Count = n()) 
+a123
+
+  w1555<- ggplot(data=a123, aes(x=State, y=a123$Count, fill=a123$PM)) +
+  geom_bar(stat="identity",width = 0.5)+labs(title="Payment Mode used in Top 10 states with highest number of markets",x="States",y="Number of markets", fill="Payment Mode")
+w23<-w1555+coord_flip()
+w23
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
