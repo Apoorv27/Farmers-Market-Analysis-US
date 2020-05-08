@@ -13,7 +13,7 @@ FMPP provides resources to support outreach and promotional activities that help
 
 
 <h1>Conclusion:</h1><br/>
-Farmers markets are an integral part of the urban/farm linkage and have continued to rise in popularity, mostly due to the growing consumer interest in obtaining fresh products directly from the farm. Direct marketing of farm products through farmers markets continues to be an important sales outlet for agricultural producers nationwide. Growth of 6% in the number of farmers suggest that the FMPP , andall supporting Payment programs are helping in fulfilling the common goal of an individual to eat fresh direct from the farm, enabling the farmers to develop a good healthy personal relationship with customers and maintain loyalty with them. 
+Farmers markets are an integral part of the urban/farm linkage and have continued to rise in popularity, mostly due to the growing consumer interest in obtaining fresh products directly from the farm. Direct marketing of farm products through farmers markets continues to be an important sales outlet for agricultural producers nationwide. Growth of 6% in the number of farmers suggest that the FMPP , andall supporting Payment programs are helping in fulfilling the common goal of an individual to eat fresh direct from the farm, enabling the farmers to develop a good healthy personal relationship with customers and maintain loyalty with them. <br/><br/>
 
 
 
